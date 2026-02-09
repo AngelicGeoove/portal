@@ -12,7 +12,11 @@ import { logout } from './auth.js';
 document.addEventListener('DOMContentLoaded', () => {
     const path = window.location.pathname;
 
-    if (path.includes('index.html') || path === '/') {
+    // GitHub Pages typically serves from a repo subfolder (e.g. /portal/)
+    // so pathname may be '/portal/' instead of '/'. Prefer DOM detection.
+    const isAuthPage = !!document.getElementById('loginFormElement');
+
+    if (isAuthPage || path.includes('index.html') || path === '/' || path.endsWith('/')) {
         initLoginPage();
     } else if (path.includes('student.html')) {
         initStudentPortal();
@@ -249,7 +253,7 @@ function setupAuthForms() {
                 userData.indexNumber = indexNumber;
             } else if (!isLecturer && !indexNumber) {
                 const { showToast } = await import('./components/Toast.js');
-                showToast('Class Reps must have an index number', 'error');
+                showToast('error', 'Class Reps must have an index number');
                 return;
             }
         } else {

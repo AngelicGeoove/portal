@@ -7,6 +7,27 @@ import { auth, db } from './firebase-config.js';
 import { showToast } from './components/Toast.js';
 import { validateIndexNumber, validateEmail } from './utils/validation.js';
 
+function getAppBasePath() {
+    const pathname = window.location.pathname || '/';
+    if (pathname.endsWith('/')) return pathname;
+    const lastSlash = pathname.lastIndexOf('/');
+    return lastSlash >= 0 ? pathname.slice(0, lastSlash + 1) : '/';
+}
+
+function toAppUrl(relativePath) {
+    const clean = String(relativePath || '').replace(/^\/+/, '');
+    return `${getAppBasePath()}${clean}`;
+}
+
+function getAuthErrorMessage(error) {
+    const code = error?.code || '';
+    if (code === 'auth/unauthorized-domain') {
+        return 'This domain is not authorized for Firebase Auth. In Firebase Console → Authentication → Settings → Authorized domains, add: angelicgeoove.github.io';
+    }
+
+    return error?.message || 'Authentication failed. Please try again.';
+}
+
 /**
  * Sign up a new user
  */
@@ -53,12 +74,13 @@ export async function signup(userData) {
         // Save user document to Firestore
         await db.collection('users').doc(user.uid).set(userDoc);
 
-        showToast('Account created successfully!', 'success');
+        showToast('success', 'Account created successfully!');
         return { success: true, user: userDoc };
     } catch (error) {
         console.error('Signup error:', error);
-        showToast(error.message || 'Failed to create account', 'error');
-        return { success: false, error: error.message };
+        const message = getAuthErrorMessage(error);
+        showToast('error', message);
+        return { success: false, error: message };
     }
 }
 
@@ -86,8 +108,9 @@ export async function login(email, password) {
         return { success: true, user: userData };
     } catch (error) {
         console.error('Login error:', error);
-        showToast('error', error.message || 'Failed to login');
-        return { success: false, error: error.message };
+        const message = getAuthErrorMessage(error);
+        showToast('error', message);
+        return { success: false, error: message };
     }
 }
 
@@ -98,7 +121,7 @@ export async function logout() {
     try {
         await auth.signOut();
         showToast('success', 'Logged out successfully');
-        window.location.href = '/index.html';
+        window.location.href = toAppUrl('index.html');
     } catch (error) {
         console.error('Logout error:', error);
         showToast('error', 'Failed to logout');
@@ -113,7 +136,7 @@ export async function checkAuth(requiredRole) {
         auth.onAuthStateChanged(async (user) => {
             if (!user) {
                 // Not logged in, redirect to login
-                window.location.href = '/index.html';
+                window.location.href = toAppUrl('index.html');
                 reject('Not authenticated');
                 return;
             }
@@ -139,7 +162,7 @@ export async function checkAuth(requiredRole) {
                 resolve(userData);
             } catch (error) {
                 console.error('Auth check error:', error);
-                window.location.href = '/index.html';
+                window.location.href = toAppUrl('index.html');
                 reject(error);
             }
         });
@@ -188,14 +211,14 @@ async function findMatchingStaff(prefix) {
  */
 function redirectToPortal(role) {
     const portals = {
-        student: '/student.html',
-        staff: '/staff.html',
-        admin: '/admin.html'
+        student: 'student.html',
+        staff: 'staff.html',
+        admin: 'admin.html'
     };
 
-    const destination = portals[role] || '/index.html';
-    if (window.location.pathname !== destination) {
-        window.location.href = destination;
+    const destinationPath = toAppUrl(portals[role] || 'index.html');
+    if (window.location.pathname !== destinationPath) {
+        window.location.href = destinationPath;
     }
 }
 
