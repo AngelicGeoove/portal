@@ -1,0 +1,590 @@
+/* ===========================================
+   Calendar & Timeline Styles
+   =========================================== */
+
+.calendar-container {
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+    overflow-x: auto;
+}
+
+/* Timeline Grid */
+.timeline-grid {
+    display: grid;
+    grid-template-columns: 80px repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+    background-color: var(--border-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    min-width: 800px;
+}
+
+/* Time Labels (Left Column) */
+.timeline-time-column {
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-secondary);
+}
+
+.timeline-time-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+    min-height: 60px;
+}
+
+.timeline-time-label:last-child {
+    border-bottom: none;
+}
+
+/* Hall/Room Columns */
+.timeline-hall-column {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-primary);
+}
+
+.timeline-hall-header {
+    padding: var(--spacing-md);
+    background-color: var(--bg-secondary);
+    border-bottom: 2px solid var(--border-color);
+    text-align: center;
+    font-weight: 600;
+    color: var(--text-primary);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.timeline-hall-header.clickable {
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+}
+
+.timeline-hall-header.clickable:hover {
+    background-color: var(--bg-tertiary);
+}
+
+/* Room Headers (when expanded) */
+.timeline-rooms-header {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1px;
+    background-color: var(--border-color);
+}
+
+.timeline-room-header {
+    padding: var(--spacing-sm);
+    background-color: var(--bg-secondary);
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+}
+
+/* Room Feature Icons */
+.room-feature-icon {
+    width: 14px;
+    height: 14px;
+    display: inline-block;
+}
+
+.room-feature-icon::before {
+    font-size: 0.875rem;
+}
+
+.icon-projector::before { content: "🎦"; }
+.icon-socket::before { content: "🔌"; }
+.icon-speaker::before { content: "🔊"; }
+
+/* Time Slots */
+.timeline-time-slots {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.timeline-slot {
+    min-height: 60px;
+    border-bottom: 1px solid var(--border-color);
+    position: relative;
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+}
+
+.timeline-slot:hover {
+    background-color: var(--bg-secondary);
+}
+
+.timeline-slot:last-child {
+    border-bottom: none;
+}
+
+/* Booking Blocks */
+.booking-block {
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.75rem;
+    color: white;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    z-index: 5;
+}
+
+.booking-block:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    z-index: 15;
+}
+
+.booking-block-title {
+    font-weight: 600;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.booking-block-time {
+    font-size: 0.7rem;
+    opacity: 0.9;
+}
+
+/* Booking Status Colors */
+.booking-permanent {
+    background-color: var(--booked-permanent);
+}
+
+.booking-event {
+    background-color: var(--booked-event);
+}
+
+.booking-temp-free {
+    background: repeating-linear-gradient(
+        45deg,
+        var(--temp-free),
+        var(--temp-free) 10px,
+        #fcd34d 10px,
+        #fcd34d 20px
+    );
+    color: var(--text-primary);
+}
+
+.slot-available {
+    background-color: rgba(16, 185, 129, 0.1);
+}
+
+.slot-unavailable {
+    background-color: rgba(239, 68, 68, 0.1);
+    cursor: not-allowed;
+}
+
+.slot-closed-study {
+    background-color: rgba(52, 211, 153, 0.15);
+}
+
+/* Current Time Indicator */
+.current-time-marker {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--danger-color);
+    z-index: 20;
+    pointer-events: none;
+}
+
+.current-time-marker::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: -3px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--danger-color);
+}
+
+.current-time-marker::after {
+    content: attr(data-time);
+    position: absolute;
+    right: var(--spacing-sm);
+    top: -10px;
+    background-color: var(--danger-color);
+    color: white;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* Current Hour Highlight */
+.timeline-slot.current-hour {
+    background-color: rgba(37, 99, 235, 0.05);
+    border-left: 3px solid var(--primary-color);
+}
+
+/* View Mode Toggle */
+.view-mode-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Legend */
+.calendar-legend {
+    display: flex;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    flex-wrap: wrap;
+}
+
+/* ===========================================
+   Room Day Grid (Find Room)
+   =========================================== */
+
+.room-day-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.room-day-grid-header {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: var(--spacing-md);
+    align-items: end;
+}
+
+.rdg-room-col {
+    padding: var(--spacing-sm);
+}
+
+.rdg-title {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.rdg-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.rdg-time-col {
+    display: grid;
+    grid-template-columns: repeat(15, 1fr);
+    gap: 0;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--bg-secondary);
+}
+
+.rdg-time-label {
+    padding: 6px 4px;
+    font-size: 0.75rem;
+    text-align: center;
+    color: var(--text-secondary);
+    border-right: 1px solid var(--border-color);
+}
+
+.rdg-time-label:last-child {
+    border-right: none;
+}
+
+.room-day-grid-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.room-day-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: var(--spacing-md);
+    align-items: stretch;
+}
+
+.room-day-room-label {
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+}
+
+.rdg-room-name {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.rdg-room-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.room-day-track {
+    position: relative;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--bg-primary);
+    overflow: hidden;
+}
+
+.room-day-track-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.room-day-hour-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(148, 163, 184, 0.35);
+}
+
+.rdg-block {
+    position: absolute;
+    height: 24px;
+    border-radius: var(--radius-sm);
+    padding: 2px 6px;
+    font-size: 0.72rem;
+    color: white;
+    cursor: pointer;
+    overflow: hidden;
+    z-index: 2;
+}
+
+.rdg-block-title {
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rdg-block-meta {
+    opacity: 0.9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rdg-block.booking-permanent { background-color: var(--booked-permanent); }
+.rdg-block.booking-event { background-color: var(--booked-event); }
+.rdg-block.booking-temp-free {
+    background: repeating-linear-gradient(
+        45deg,
+        var(--temp-free),
+        var(--temp-free) 10px,
+        #fcd34d 10px,
+        #fcd34d 20px
+    );
+    color: var(--text-primary);
+}
+.rdg-block.booking-unavailable { background-color: var(--danger-color); }
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: 0.875rem;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: var(--radius-sm);
+}
+
+/* ===========================================
+   Weekly Timetable (Student Schedule)
+   Rows: Mon-Sun, Columns: 6AM-8PM
+   =========================================== */
+
+.weekly-timetable {
+    width: 100%;
+}
+
+.weekly-timetable-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.weekly-timetable-grid {
+    display: grid;
+    grid-template-columns: 160px repeat(15, 1fr);
+    gap: 1px;
+    background-color: var(--border-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    min-width: 1000px;
+}
+
+.weekly-timetable-corner {
+    background-color: var(--bg-secondary);
+    padding: var(--spacing-sm);
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.weekly-timetable-time-label {
+    background-color: var(--bg-secondary);
+    padding: var(--spacing-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-align: center;
+    white-space: nowrap;
+}
+
+.weekly-timetable-day-label {
+    background-color: var(--bg-secondary);
+    padding: var(--spacing-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    justify-content: center;
+}
+
+.weekly-timetable-day-label .day-name {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.weekly-timetable-day-label .day-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.weekly-timetable-day-track {
+    grid-column: 2 / -1;
+    background-color: var(--bg-primary);
+    position: relative;
+    padding: 10px 8px;
+    overflow: hidden;
+}
+
+.weekly-timetable-track-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.weekly-timetable-hour-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background-color: rgba(226, 232, 240, 0.9);
+}
+
+.weekly-booking-block {
+    position: absolute;
+    min-height: 22px;
+    border-radius: var(--radius-sm);
+    padding: 4px 6px;
+    color: white;
+    font-size: 0.75rem;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.weekly-booking-block .wb-title {
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.weekly-booking-block .wb-meta {
+    opacity: 0.9;
+    font-size: 0.7rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Reuse existing booking colors */
+.weekly-booking-block.booking-permanent {
+    background-color: var(--booked-permanent);
+}
+
+.weekly-booking-block.booking-event {
+    background-color: var(--booked-event);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .calendar-container {
+        padding: var(--spacing-sm);
+    }
+    
+    .timeline-grid {
+        grid-template-columns: 60px repeat(auto-fit, minmax(120px, 1fr));
+        min-width: 600px;
+    }
+    
+    .timeline-time-label {
+        font-size: 0.65rem;
+        padding: var(--spacing-xs);
+    }
+    
+    .timeline-hall-header {
+        padding: var(--spacing-sm);
+        font-size: 0.75rem;
+    }
+    
+    .booking-block {
+        font-size: 0.65rem;
+        padding: 2px var(--spacing-xs);
+    }
+    
+    .calendar-legend {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    .weekly-timetable-grid {
+        grid-template-columns: 130px repeat(15, 1fr);
+        min-width: 900px;
+    }
+}

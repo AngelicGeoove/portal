@@ -1,0 +1,43 @@
+So, a site, a student portal type of site.
+The site is mainly a scheduling site, it has the student side of the site, and the admin/teachers part of the site.
+The overall purpose of the site: a site to book leccture halls and to know which time of the day the lecture hall is occupied.
+For the overall site:
+Just like any university, there are many lecture halls in many differtn parts of the university. Lecture halls have many rooms and varying number of students that it can comfotably take.
+For admins/teachers/class reps:
+they are able to book lecture halls for a particular duration of a day, e;g: lecture hall 1, room 5: 30 minutes, 2 hours, 3 hours, etc. This booking will be for one course, they can have multiple bookings in different lecture halls or rooms or the same room in one day.
+That booking will be termed as permanent booking. However they can choose that, maybe for that week the lecturer will not be available so they can mark that day, as the room is free, then it wil show on the site that, this room is free this week but normally occupied.
+They are also able to book rooms for special purposes like events like quizzes, so these are one time bookings.
+For students:
+They are able to view which rooms are available on which day, and which are booked. It should all be visual.
+This is for when they want to find a free room for their personal studies.
+Let's start from here, we will add more features as it comes to my mind.
+
+Create a visual calendar component for the student portal. The calendar should display lecture halls and rooms, color-coding time slots to indicate whether they are booked, available, or marked as temporarily free. Allow users to filter by date and lecture hall.
+Develop a conflict detection system for the booking module. When an admin attempts to book a room that is already reserved or marked as temporarily free for that specific time, the system should display an error message and prevent the booking. For one-time event bookings, highlight potential overlaps with permanent bookings.
+
+Let's have the bookings / rooms clickable. To see:
+How many working electricity sockets
+Working projector
+Working PSA / Mic and speaker
+After that, let's redo the visuals. Having the Lecture halls be horrizontally scrollable doesnt work for me. Need all of them at a glance, then on click, then filter by rooms. So i guess the student view also needs 2 modes, the first mode being the all view mode where it shows the whole schedule of the rooms from 6Am to 8PM, and the current view mode where it only shows the current 2 or 3 next hours, probably next 2 hours.
+We proably need to also expand them more. Every student has a set number of programs they do, so we can hav a page where it shows their courses and the classes they6 are scheduled to by their class rep.
+
+In the Timeline component, add small icons next to room names to visually indicate key features like 'Projector' or 'Sockets'.
+
+In the Timeline component, visually highlight the current hour block when in 'now' or full day view mode.
+Also seems like booking deletion / temporary closing by the staff doesnt work, let's look at fixing that.
+After that, we will have need a admin portal. they will be responsible for adding rooms and buildings and setting number of seats, and rooms and room features. Admins should also be able to mark cetain times of certain days of rooms completely unbookable to signal that they are closed and students arent allowed in, with custom headers.
+
+
+No let's separate the admin mode from the staff mode. The admin mode will be responsible for the Adding of lecture halls and the staff will be the ones for booking.
+
+Now let's look at the signing up/ sining-in stage.
+Admin:
+For now let's only have one admin page, let's make it secret, like a special button on the page to go there.
+Responsible for adding lecture halls, adding rooms, room available setas, features of rooms, ability to make a room completly unavailable for booking during certain days either to allow for free rooms for student studies or for the rooms themeselves to be completly unavalibale to students.
+Class reps/lecturers:
+So each class has the student ID being like PS/ITC/22/[0000]. The class rep/lectuers will be the ones doing the bookings. when they are sigining up, they are supposed to choose input the XX/XXX/XX that any regular student who sign up will be put under them. So to clarify, the class rep is let's say of the index number CS/DVB/19/0273. Any other student that signs up under them using the CS/DVB/19/.... will automatically be assigned to the bookings by this rep. So their schedules will be populated by the choices of the rep. Same for the lecturer where he will indicate the index number he is taking charge of. Lectueres are taking multiple calsses at a time so they should be able to view / book multiple.
+So during booking, the field will now instead be a dropdown of lectuers that the class rep has to choose if its the class rep booking, or a class that the lectuerer has to assign if it;s the lectuerer booking. The lectuerer may not have signed up by the time the class rep is booking, so have option for unspecified, but should be modifiable later.
+I am planning to host the page on github pages, so just leave comments in places where the github hooking code will be wnad i will do it myself later.
+students:
+They sign up as i said, using the xx/xxx/xx/[xxxx]. on successful sign-in, their index number is used to look up a rep or lectuers that will be teaching classes with that index number format, and then their schedule is populated using that.

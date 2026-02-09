@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal - UCC</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/calendar.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h1>UCC Student Portal</h1>
+        </div>
+        <div class="nav-menu">
+            <a href="#dashboard" class="nav-link active">Dashboard</a>
+            <a href="#schedule" class="nav-link">My Schedule</a>
+            <a href="#find-room" class="nav-link">Find Room</a>
+            <a href="#courses" class="nav-link">My Courses</a>
+        </div>
+        <div class="nav-user">
+            <span id="userName">Loading...</span>
+            <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard View -->
+        <section id="dashboardView" class="view active">
+            <div class="dashboard-header">
+                <h2>Welcome, <span id="studentName"></span></h2>
+                <p class="student-index">Index: <span id="studentIndex"></span></p>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Upcoming Classes -->
+                <div class="card">
+                    <h3>Upcoming Classes Today</h3>
+                    <div id="upcomingClasses" class="class-list">
+                        <p class="loading">Loading...</p>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="card">
+                    <h3>Quick Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-value" id="totalCourses">0</span>
+                            <span class="stat-label">Courses</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="classesThisWeek">0</span>
+                            <span class="stat-label">Classes This Week</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Available Rooms Now -->
+                <div class="card full-width">
+                    <h3>Available Rooms Right Now</h3>
+                    <div id="availableRoomsNow" class="room-grid">
+                        <p class="loading">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Schedule View -->
+        <section id="scheduleView" class="view">
+            <div class="view-header">
+                <h2>My Schedule</h2>
+                <div class="view-controls">
+                    <button id="prevWeekBtn" class="btn btn-secondary">Prev Week</button>
+                    <input type="date" id="scheduleDate" class="date-input" title="Week anchor date">
+                    <button id="nextWeekBtn" class="btn btn-secondary">Next Week</button>
+                </div>
+            </div>
+            <div id="scheduleCalendar" class="calendar-container">
+                <!-- Weekly timetable component will be rendered here -->
+            </div>
+        </section>
+
+        <!-- Find Room View -->
+        <section id="findRoomView" class="view">
+            <div class="view-header">
+                <h2>Find Available Room</h2>
+                <div class="filter-controls">
+                    <input type="date" id="findRoomDate" class="filter-input" title="Select date">
+                    <select id="filterHall" class="filter-select">
+                        <option value="">All Lecture Halls</option>
+                    </select>
+                    <select id="filterFeatures" class="filter-select">
+                        <option value="">Any Features</option>
+                        <option value="projector">Has Projector</option>
+                        <option value="sockets">Many Sockets</option>
+                        <option value="speaker">Has PA System</option>
+                    </select>
+                    <input type="number" id="filterCapacity" placeholder="Min Capacity" class="filter-input">
+                </div>
+            </div>
+            <div id="availableRoomsList" class="room-list">
+                <p class="loading">Loading available rooms...</p>
+            </div>
+        </section>
+
+        <!-- My Courses View -->
+        <section id="coursesView" class="view">
+            <div class="view-header">
+                <h2>My Courses</h2>
+            </div>
+            <div id="coursesList" class="courses-grid">
+                <p class="loading">Loading courses...</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Room Details Modal -->
+    <div id="roomModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div id="roomModalContent">
+                <!-- Room details will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore-compat.js"></script>
+
+    <!-- Application Scripts -->
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/utils/dateUtils.js"></script>
+    <script type="module" src="js/services/bookingService.js"></script>
+    <script type="module" src="js/services/roomService.js"></script>
+    <script type="module" src="js/services/userService.js"></script>
+    <script type="module" src="js/components/Timeline.js"></script>
+    <script type="module" src="js/components/WeeklyTimetable.js"></script>
+    <script type="module" src="js/components/RoomDayGrid.js"></script>
+    <script type="module" src="js/components/Modal.js"></script>
+    <script type="module" src="js/components/RoomCard.js"></script>
+    <script type="module" src="js/components/Toast.js"></script>
+    <script type="module" src="js/router.js"></script>
+    <script type="module" src="js/app.js"></script>
+
+    <script type="module">
+        // Student-specific initialization
+        import { checkAuth } from './js/auth.js';
+        
+        // Verify user is authenticated and is a student
+        checkAuth('student');
+    </script>
+</body>
+</html>

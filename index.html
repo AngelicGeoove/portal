@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCC Portal - Login</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>UCC Lecture Hall Portal</h1>
+                <p>University Scheduling & Room Booking System</p>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form">
+                <h2>Login</h2>
+                <form id="loginFormElement">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" required placeholder="your.email@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" required placeholder="Enter your password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                    <div class="form-footer">
+                        <p>Don't have an account? <a href="#" id="showSignup">Sign Up</a></p>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Sign Up Form -->
+            <div id="signupForm" class="auth-form hidden">
+                <h2>Sign Up</h2>
+                <form id="signupFormElement">
+                    <div class="form-group">
+                        <label for="signupName">Full Name</label>
+                        <input type="text" id="signupName" required placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" id="signupEmail" required placeholder="your.email@example.com">
+                    </div>
+                    <div class="form-group" id="indexNumberField">
+                        <label for="signupIndexNumber">Index Number</label>
+                        <input type="text" id="signupIndexNumber" required placeholder="XX/XXX/XX/XXXX" pattern="[A-Z]{2}/[A-Z]{3}/\d{2}/\d{4}">
+                        <small>Format: XX/XXX/XX/XXXX (e.g., CS/DVB/22/0001)</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" required placeholder="At least 6 characters">
+                    </div>
+                    <div class="form-group">
+                        <label for="signupRole">I am a:</label>
+                        <select id="signupRole" required>
+                            <option value="student">Student</option>
+                            <option value="staff">Class Rep / Lecturer</option>
+                        </select>
+                    </div>
+
+                    <!-- Staff-specific fields -->
+                    <div id="staffFields" class="hidden">
+                        <div class="form-group">
+                            <label for="isLecturer">
+                                <input type="checkbox" id="isLecturer">
+                                I am a Lecturer (not just class rep)
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="managedPrefixes">Managed Class Index Prefixes</label>
+                            <textarea id="managedPrefixes" rows="3" placeholder="CS/DVB/22&#10;CS/ITC/21&#10;PS/DVB/20"></textarea>
+                            <small>One per line. Format: XX/XXX/XX</small>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                    <div class="form-footer">
+                        <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Secret Admin Access (Ctrl+Alt+A or triple-click logo) -->
+            <div class="logo-secret" id="logoSecret" title="Admin Portal"></div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore-compat.js"></script>
+
+    <!-- Application Scripts -->
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/utils/validation.js"></script>
+    <script type="module" src="js/components/Toast.js"></script>
+    <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
