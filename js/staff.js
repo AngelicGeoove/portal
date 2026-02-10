@@ -11,7 +11,8 @@ import { getDayOfWeek, timeRangesOverlap } from './utils/dateUtils.js';
 import { auth, db } from './firebase-config.js';
 import { renderTimeline } from './components/Timeline.js';
 import { renderRoomDayGrid } from './components/RoomDayGrid.js';
-import { getCurrentDate } from './utils/dateUtils.js';
+import { renderWeeklyTimetable } from './components/WeeklyTimetable.js';
+import { getCurrentDate, getWeekStart, addWeeks } from './utils/dateUtils.js';
 
 let currentUser = null;
 let currentBookingId = null;
@@ -120,20 +121,36 @@ function setupButtons() {
     document.getElementById('viewScheduleBtn')?.addEventListener('click', () => navigateToView('calendar'));
     document.getElementById('cancelBookingBtn')?.addEventListener('click', () => navigateToView('dashboard'));
 
-    // Calendar controls
-    const toggleBtn = document.getElementById('toggleViewMode');
+    // Calendar controls - week navigation
+    const prevWeekBtn = document.getElementById('prevWeekBtnCalendar');
+    const nextWeekBtn = document.getElementById('nextWeekBtnCalendar');
     const dateInput = document.getElementById('calendarDate');
     const hallFilter = document.getElementById('calendarHallFilter');
 
-    if (dateInput && !dateInput.value) dateInput.value = getCurrentDate();
+    if (dateInput && !dateInput.value) {
+        dateInput.value = getWeekStart(getCurrentDate());
+    }
 
-    toggleBtn?.addEventListener('click', () => {
-        calendarMode = calendarMode === 'full' ? 'current' : 'full';
-        toggleBtn.textContent = calendarMode === 'full' ? 'Switch to Current View' : 'Switch to Full Day View';
+    prevWeekBtn?.addEventListener('click', () => {
+        const current = dateInput?.value || getCurrentDate();
+        const newDate = addWeeks(getWeekStart(current), -1);
+        if (dateInput) dateInput.value = newDate;
         loadCalendar();
     });
 
-    dateInput?.addEventListener('change', () => loadCalendar());
+    nextWeekBtn?.addEventListener('click', () => {
+        const current = dateInput?.value || getCurrentDate();
+        const newDate = addWeeks(getWeekStart(current), 1);
+        if (dateInput) dateInput.value = newDate;
+        loadCalendar();
+    });
+
+    dateInput?.addEventListener('change', () => {
+        // Snap to week start
+        const weekStart = getWeekStart(dateInput.value);
+        dateInput.value = weekStart;
+        loadCalendar();
+    });
     hallFilter?.addEventListener('change', () => loadCalendar());
 }
 
@@ -301,7 +318,7 @@ async function loadMyBookings() {
 }
 
 /**
- * Load Calendar view
+ * Load Calendar view - Weekly Timetable
  */
 async function loadCalendar() {
     const container = document.getElementById('calendarContainer');
@@ -314,80 +331,49 @@ async function loadCalendar() {
 
         const dateInput = document.getElementById('calendarDate');
         const hallFilter = document.getElementById('calendarHallFilter');
-        const toggleBtn = document.getElementById('toggleViewMode');
 
-        const date = dateInput?.value || getCurrentDate();
-        if (dateInput && !dateInput.value) dateInput.value = date;
+        let weekStartDate = dateInput?.value || getCurrentDate();
+        // Snap to week start (Monday)
+        weekStartDate = getWeekStart(weekStartDate);
+        if (dateInput && dateInput.value !== weekStartDate) {
+            dateInput.value = weekStartDate;
+        }
 
-        const dayOfWeek = getDayOfWeek(date);
         const hallId = hallFilter?.value || '';
 
-        const [halls, bookingsForDate, allUnavailability] = await Promise.all([
-            getCachedHalls(),
-            bookingService.getBookingsForDate(date, dayOfWeek),
-            roomService.getAllUnavailability(),
-        ]);
-
-        // No hall selected: show all halls as columns (fast overview)
-        if (!hallId) {
-            if (toggleBtn) toggleBtn.disabled = false;
-            renderTimeline('calendarContainer', date, halls, bookingsForDate, calendarMode);
-            return;
+        // Get bookings for the week (all 7 days)
+        const weekDates = [];
+        for (let i = 0; i < 7; i++) {
+            const d = new Date(weekStartDate);
+            d.setDate(d.getDate() + i);
+            weekDates.push(d.toISOString().slice(0, 10));
         }
 
-        // Hall selected: show per-room day grid (more detailed)
-        if (toggleBtn) toggleBtn.disabled = true;
+        // Fetch bookings for all days in the week
+        const bookingsPromises = weekDates.map((date, idx) => 
+            bookingService.getBookingsForDate(date, idx + 1)
+        );
+        const bookingsArrays = await Promise.all(bookingsPromises);
+        const allBookings = bookingsArrays.flat();
 
-        const hall = (halls || []).find(h => (h.id || h.hallId) === hallId) || { id: hallId, hallId, name: 'Selected Hall' };
-        const rooms = await roomService.getRoomsByHall(hallId);
-        const roomIdSet = new Set((rooms || []).map(r => r.roomId || r.id).filter(Boolean));
-
-        const blocks = [];
-
-        // bookings -> blocks, including tempfree blocks
-        for (const b of bookingsForDate || []) {
-            const roomId = b.roomId || b.roomID;
-            if (!roomIdSet.has(roomId)) continue;
-
-            if (b.type === 'permanent' && Array.isArray(b.temporaryFreeDates) && b.temporaryFreeDates.includes(date)) {
-                blocks.push({
-                    ...b,
-                    type: 'tempfree',
-                    title: 'Temporarily Free'
-                });
-                continue;
-            }
-
-            blocks.push(b);
+        // Filter by hall if selected
+        let filteredBookings = allBookings;
+        if (hallId) {
+            filteredBookings = allBookings.filter(b => b.hallId === hallId);
         }
 
-        // admin unavailability -> blocks
-        const reasonLabels = {
-            maintenance: 'Maintenance',
-            cleaning: 'Cleaning',
-            student_study: 'Free for Student Study',
-            closed: 'Closed'
-        };
-
-        for (const u of allUnavailability || []) {
-            const roomId = u.roomId || u.roomID;
-            if (!roomIdSet.has(roomId)) continue;
-            if (u.hallId && u.hallId !== hallId) continue;
-
-            const matches = u.type === 'date'
-                ? (u.date === date)
-                : (parseInt(u.dayOfWeek || 0, 10) === dayOfWeek);
-            if (!matches) continue;
-
-            blocks.push({
-                ...u,
-                type: 'unavailable',
-                reasonLabel: reasonLabels[u.reason] || u.reason || 'Unavailable'
-            });
+        // Determine title
+        let title = 'Weekly Schedule';
+        if (hallId) {
+            const halls = await getCachedHalls();
+            const hall = (halls || []).find(h => (h.id || h.hallId) === hallId);
+            title = hall ? `${hall.name} - Weekly Schedule` : 'Weekly Schedule';
+        } else {
+            title = 'All Halls - Weekly Schedule';
         }
 
-        renderRoomDayGrid('calendarContainer', date, hall, rooms, blocks, {
-            title: `${hall.name || 'Lecture Hall'} • Daily Room Schedule`
+        renderWeeklyTimetable('calendarContainer', weekStartDate, filteredBookings, {
+            title
         });
     } catch (error) {
         console.error('Error loading calendar:', error);

@@ -126,15 +126,16 @@
             <div class="view-header">
                 <h2>Schedule Calendar</h2>
                 <div class="view-controls">
-                    <button id="toggleViewMode" class="btn btn-secondary">Switch to Current View</button>
-                    <input type="date" id="calendarDate" class="date-input">
+                    <button id="prevWeekBtnCalendar" class="btn btn-icon" title="Previous Week">←</button>
+                    <input type="date" id="calendarDate" class="date-input" title="Week start date">
+                    <button id="nextWeekBtnCalendar" class="btn btn-icon" title="Next Week">→</button>
                     <select id="calendarHallFilter" class="filter-select">
                         <option value="">All Halls</option>
                     </select>
                 </div>
             </div>
             <div id="calendarContainer" class="calendar-container">
-                <!-- Timeline component will be rendered here -->
+                <!-- Weekly timetable will be rendered here -->
             </div>
         </section>
 
@@ -314,6 +315,7 @@
     <script type="module" src="js/services/userService.js"></script>
     <script type="module" src="js/components/Timeline.js"></script>
     <script type="module" src="js/components/RoomDayGrid.js"></script>
+    <script type="module" src="js/components/WeeklyTimetable.js"></script>
     <script type="module" src="js/components/Modal.js"></script>
     <script type="module" src="js/components/BookingForm.js"></script>
     <script type="module" src="js/components/Toast.js"></script>
