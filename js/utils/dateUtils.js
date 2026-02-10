@@ -177,3 +177,28 @@ export function getTimeSlotIndex(time) {
 export function getCurrentTimeSlotIndex() {
     return getTimeSlotIndex(getCurrentTime());
 }
+
+/**
+ * Get the Monday of the week containing the given date
+ * @param {string} dateString - Date in YYYY-MM-DD format
+ * @returns {string} - Monday of that week in YYYY-MM-DD format
+ */
+export function getWeekStart(dateString) {
+    const date = new Date(dateString);
+    const day = date.getDay();
+    const diff = day === 0 ? -6 : 1 - day; // If Sunday (0), go back 6 days; otherwise go to Monday
+    date.setDate(date.getDate() + diff);
+    return date.toISOString().split('T')[0];
+}
+
+/**
+ * Add or subtract weeks from a date
+ * @param {string} dateString - Date in YYYY-MM-DD format
+ * @param {number} weeks - Number of weeks to add (negative to subtract)
+ * @returns {string} - New date in YYYY-MM-DD format
+ */
+export function addWeeks(dateString, weeks) {
+    const date = new Date(dateString);
+    date.setDate(date.getDate() + (weeks * 7));
+    return date.toISOString().split('T')[0];
+}
