@@ -35,7 +35,14 @@ try {
     // Using compat version (for CDN)
     if (typeof firebase !== 'undefined') {
         app = firebase.initializeApp(firebaseConfig);
-        auth = firebase.auth();
+        
+        // Only initialize auth if the auth SDK is loaded
+        if (firebase.auth) {
+            auth = firebase.auth();
+        } else {
+            console.log('Firebase Auth SDK not loaded (not needed for this page)');
+        }
+        
         db = firebase.firestore();
         console.log('Firebase initialized successfully (compat mode)');
     } else {
