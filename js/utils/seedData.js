@@ -1,5 +1,5 @@
 
-import { db } from '../firebase-config.js';
+import { db, auth } from '../firebase-config.js';
 import { showToast } from '../components/Toast.js';
 
 /**

@@ -14,7 +14,7 @@ import { renderRoomDayGrid } from './components/RoomDayGrid.js';
 import { renderWeeklyTimetable } from './components/WeeklyTimetable.js';
 import { getCurrentDate, getWeekStart, addWeeks } from './utils/dateUtils.js';
 
-let currentUser = null;
+export let currentUser = null;
 let currentBookingId = null;
 let bookingsCache = [];
 let bookingById = new Map();
@@ -143,8 +143,9 @@ function setupButtons() {
     document.getElementById('viewScheduleBtn')?.addEventListener('click', () => navigateToView('calendar'));
     document.getElementById('cancelBookingBtn')?.addEventListener('click', () => navigateToView('dashboard'));
 
-    // Seed Data (Prototype)
+        // Seed Data (Prototype)
     document.getElementById('seedBookingsBtn')?.addEventListener('click', async () => {
+        console.log('Seed button clicked. CurrentUser:', currentUser);
         if (!confirm('Add sample bookings to your schedule?')) return;
         
         try {
@@ -152,12 +153,14 @@ function setupButtons() {
             showToast('info', 'Creating bookings...', 'Please wait');
             
             const { seedBookingsForStaff } = await import('./utils/seedData.js');
+            // Pass the currentUser explicitly
             const result = await seedBookingsForStaff(currentUser);
             
             if (result.success) {
                 showToast('success', result.message);
                 loadMyBookings();
             } else {
+                console.error('Seed failed:', result.error);
                 showToast('error', result.error);
             }
         } catch (err) {
