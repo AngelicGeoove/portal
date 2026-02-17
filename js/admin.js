@@ -25,6 +25,29 @@ export function initAdmin() {
         setupButtons();
         console.log('Starting setupModals...');
         setupModals();
+
+        // Seed Data Button (Prototype only)
+        document.getElementById('seedDataBtn')?.addEventListener('click', async () => {
+            if (!confirm('Are you sure you want to add sample halls and rooms?')) return;
+            
+            const { showToast } = await import('./components/Toast.js');
+            showToast('info', 'Seeding data...', 'Please wait');
+            
+            try {
+                const { seedLectureHallsAndRooms } = await import('./utils/seedData.js');
+                const result = await seedLectureHallsAndRooms();
+                if (result.success) {
+                    showToast('success', result.message);
+                    loadDashboard(); // Refresh
+                } else {
+                    showToast('error', result.error);
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('error', 'Failed to seed data');
+            }
+        });
+
         console.log('Starting loadDashboard...');
         loadDashboard();
         console.log('initAdmin() complete');
