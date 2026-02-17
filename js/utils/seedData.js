@@ -78,7 +78,8 @@ export async function seedLectureHallsAndRooms() {
  * Seed Staff Data: Bookings
  */
 export async function seedBookingsForStaff(staffUser) {
-    if (!staffUser || !staffUser.uid) return { success: false, error: "Not authenticated" };
+    const userId = staffUser?.id || staffUser?.uid;
+    if (!staffUser || !userId) return { success: false, error: "Not authenticated" };
 
     // 1. Get some halls and rooms to book
     const roomsSnap = await db.collection('rooms').limit(5).get();
@@ -129,7 +130,7 @@ export async function seedBookingsForStaff(staffUser) {
             courseName: course.name,
             courseCode: course.code,
             description: "Seeded booking for testing",
-            staffId: staffUser.uid,
+            staffId: userId,
             userName: staffUser.name || 'Staff User',
             hallId: room.hallId,
             hallName: hallName,
