@@ -121,6 +121,30 @@ function setupButtons() {
     document.getElementById('viewScheduleBtn')?.addEventListener('click', () => navigateToView('calendar'));
     document.getElementById('cancelBookingBtn')?.addEventListener('click', () => navigateToView('dashboard'));
 
+    // Seed Data (Prototype)
+    document.getElementById('seedBookingsBtn')?.addEventListener('click', async () => {
+        if (!confirm('Add sample bookings to your schedule?')) return;
+        
+        try {
+            const { showToast } = await import('./components/Toast.js');
+            showToast('info', 'Creating bookings...', 'Please wait');
+            
+            const { seedBookingsForStaff } = await import('./utils/seedData.js');
+            const result = await seedBookingsForStaff(currentUser);
+            
+            if (result.success) {
+                showToast('success', result.message);
+                loadMyBookings();
+            } else {
+                showToast('error', result.error);
+            }
+        } catch (err) {
+            console.error(err);
+            const { showToast } = await import('./components/Toast.js');
+            showToast('error', 'Failed to seed bookings');
+        }
+    });
+
     // Calendar controls - week navigation
     const prevWeekBtn = document.getElementById('prevWeekBtnCalendar');
     const nextWeekBtn = document.getElementById('nextWeekBtnCalendar');
