@@ -78,8 +78,23 @@ export async function seedLectureHallsAndRooms() {
  * Seed Staff Data: Bookings
  */
 export async function seedBookingsForStaff(staffUser) {
-    const userId = staffUser?.id || staffUser?.uid;
-    if (!staffUser || !userId) return { success: false, error: "Not authenticated" };
+    // Fallback: if staffUser is missing/improper, try to get current auth user
+    let userId = staffUser?.id || staffUser?.uid;
+    let userName = staffUser?.name || staffUser?.displayName || 'Staff User';
+
+    if (!userId) {
+        console.warn('No staffUser passed to seedBookingsForStaff, checking auth.currentUser');
+        const user = auth.currentUser;
+        if (user) {
+            userId = user.uid;
+            userName = user.displayName || 'Auth User';
+        }
+    }
+
+    if (!userId) {
+        console.error('seedBookingsForStaff: No user ID found', { staffUser });
+        return { success: false, error: "Not authenticated (No User ID)" };
+    }
 
     // 1. Get some halls and rooms to book
     const roomsSnap = await db.collection('rooms').limit(5).get();
