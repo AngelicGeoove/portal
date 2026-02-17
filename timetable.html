@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCC Portal - Public Timetable</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/calendar.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+    <div class="portal-container">
+        <header class="portal-header">
+            <div class="header-content">
+                <h1>UCC Lecture Hall Portal</h1>
+                <p>Weekly Class Schedule</p>
+            </div>
+            <div class="header-actions">
+                <a href="index.html" class="btn btn-secondary">Back to Login</a>
+            </div>
+        </header>
+
+        <main class="portal-main">
+            <div class="view-header">
+                <h2>Weekly Timetable</h2>
+                <div class="view-controls">
+                    <button id="prevWeekBtn" class="btn btn-icon" title="Previous Week">←</button>
+                    <input type="date" id="weekDate" class="date-input" title="Week start date">
+                    <button id="nextWeekBtn" class="btn btn-icon" title="Next Week">→</button>
+                    <select id="hallFilter" class="filter-select">
+                        <option value="">All Halls</option>
+                    </select>
+                </div>
+            </div>
+            <div id="timetableContainer" class="calendar-container">
+                <p class="loading">Loading timetable...</p>
+            </div>
+        </main>
+
+        <footer class="portal-footer">
+            <p>&copy; 2026 UCC Lecture Hall Portal</p>
+        </footer>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore-compat.js"></script>
+
+    <!-- Application Scripts -->
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/components/Toast.js"></script>
+    <script type="module" src="js/components/WeeklyTimetable.js"></script>
+    <script type="module" src="js/timetable.js"></script>
+</body>
+</html>
